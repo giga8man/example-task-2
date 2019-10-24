@@ -8,9 +8,11 @@ const getRouteSummary = (locations) => {
   return `${from} - ${to}`
 }
 
-const MapComponent = () => {
+const MapComponent = ({when}) => {
   const map = useRef()
-  const [locations, setLocations] = useState()
+  const [locations, setLocations] = useState();
+  const [mapPosition, setMapPosition] = useState();
+  const [marker, setMarker] = useState();
   // Request location data.
   useEffect(() => {
     fetch('http://localhost:3000')
@@ -20,6 +22,13 @@ const MapComponent = () => {
       })
   }, [])
   // TODO(Task 2): Request location closest to specified datetime from the back-end.
+  useEffect(() => {
+    when && fetch('http://localhost:3000/location/'+ when.getTime())
+    .then(response => response.json())
+    .then((json) => {
+      setMapPosition(json.closestPoint)
+    })
+  }, [when])
 
   // Initialize map.
   useEffect(() => {
@@ -49,6 +58,10 @@ const MapComponent = () => {
     });
   }, [locations, map.current])
   // TODO(Task 2): Display location that the back-end returned on the map as a marker.
+  useEffect(() => {
+   marker && map.current.removeLayer(marker);
+   if(mapPosition) setMarker(L.marker([mapPosition.lat, mapPosition.lon]).addTo(map.current));
+  }, [mapPosition])
 
   return (
     <div>

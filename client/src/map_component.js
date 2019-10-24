@@ -43,7 +43,7 @@ const MapComponent = () => {
     locations.forEach(trip => {
       const color = "#000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);});//https://stackoverflow.com/a/5092872
       const latlons = trip.map(({ lat, lon }) => [lat, lon])
-      const polyline = L.polyline(latlons, { color }).bindPopup(getRouteSummary(locations)).addTo(map.current)
+      const polyline = L.polyline(latlons, { color }).bindPopup(getRouteSummary(trip)).addTo(map.current)
       map.current.fitBounds(polyline.getBounds())
       return () => map.current.remove(polyline)
     });
